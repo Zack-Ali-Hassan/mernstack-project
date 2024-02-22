@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@/hooks/useUser";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -22,6 +23,10 @@ function Register() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const {user} = useUser();
+  useEffect(()=>{
+    if(user) navigate("/")
+  },[user])
   const handlInputChange = (event) => {
     setFormData({...formData, [event.target.id] : event.target.value})
   };
@@ -29,7 +34,7 @@ function Register() {
     event.preventDefault();
     setIsLoading(true);
    try {
-    const {data} = await axios.post('/api/register-user', formData);
+    const {data} = await axios.post('/api/user/register-user', formData);
     toast.success("Register Successfully")
     setIsLoading(false)
     navigate("/login")

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Card,
     CardContent,
@@ -13,14 +13,18 @@ import {
   import axios from "axios";
   import toast from "react-hot-toast";
   import { useNavigate } from "react-router-dom";
+import { useUser } from '@/hooks/useUser';
 function Login() {
     const [formData, setFormData] = useState({
-        username: "",
         email: "",
         password: "",
       });
+      const {login, user} =useUser();
       const [isLoading, setIsLoading] = useState(false);
       const navigate = useNavigate();
+      useEffect(()=>{
+        if(user) navigate("/")
+      },[user])
       const handlInputChange = (event) => {
         setFormData({...formData, [event.target.id] : event.target.value})
       };
@@ -28,14 +32,16 @@ function Login() {
         event.preventDefault();
         setIsLoading(true);
        try {
-        const {data} = await axios.post('/api/register-user', formData);
-        toast.success("Register Successfully")
+        const {data} = await axios.post('/api/user/login-user', formData);
+        toast.success("Login Successfully")
+        console.log("data are : " + data)
+        login(data,data.expiresIn)
         setIsLoading(false)
-        navigate("/login")
+        navigate("/")
        } catch (error) {
         setIsLoading(false)
         toast.error(error.response.data)
-        console.log("Error registering from frontend " , error)
+        console.log("Error login user from frontend " , error)
        }
       };
   return (
@@ -48,11 +54,11 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 onChange={handlInputChange}
-                id="username"
-                placeholder="Enter your username"
+                id="email"
+                placeholder="Enter your email"
               />
             </div>
             
