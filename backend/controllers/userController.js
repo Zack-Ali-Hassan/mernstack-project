@@ -7,7 +7,7 @@ export const readUser = async (req, res) => {
     const getUser = await User.find({});
     return res.status(201).json(getUser);
   } catch (error) {
-    console.log(`${chalk.red.bold("Error registering user")} ${error}`);
+    console.log(`${chalk.red.bold("Error reading user")} ${error}`);
     res.status(500).json(error.message);
   }
 };
