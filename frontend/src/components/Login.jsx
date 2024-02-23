@@ -37,7 +37,7 @@ function Login() {
         console.log("data are : " + data)
         login(data,data.expiresIn)
         setIsLoading(false)
-        navigate("/")
+        navigate("/dashboard")
        } catch (error) {
         setIsLoading(false)
         toast.error(error.response.data)

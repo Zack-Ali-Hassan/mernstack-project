@@ -7,6 +7,7 @@ export const UserProvidor = ({children})=>{
         localStorage.removeItem("user");
         localStorage.removeItem("expireDate");
         setUser(null);
+        window.location = "/login"
     }
     useEffect(()=>{
         const storedUser = localStorage.getItem("user");

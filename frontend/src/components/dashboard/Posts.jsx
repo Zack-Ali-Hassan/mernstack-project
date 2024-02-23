@@ -25,9 +25,17 @@ function Posts() {
   },[])
   const onDelete = async (id)=>{
     try {
-      const {data} = await axios.delete('/api/post/delete-post/' +id);
-      setIsLoading(false)
+      if(confirm("Are you sure you want to delete")){
+        const previewPostData = [...postData];
+        const updatePostData = postData.filter(post => post._id != id);
+        setPostData(updatePostData)
+        const {data} = await axios.delete('/api/post/delete-post/' +id);
+        setIsLoading(false)
+        toast.success("Post deleted successfully")
+      }
+     
     } catch (error) {
+      setPostData(previewPostData)
       setIsLoading(false)
       toast.error(error.response.data.message || "Login Failed")
       console.log("Error in deleting posts from frontend", error)
@@ -38,7 +46,7 @@ function Posts() {
   return (
     <div>
       <div className='mb-4'>
-      <DialogForm/>
+      <DialogForm />
       </div>
        
         {

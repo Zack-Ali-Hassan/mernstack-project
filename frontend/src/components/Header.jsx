@@ -14,9 +14,7 @@ function Header() {
           <ul className="flex space-x-4">
             {user ? (
               <>
-                <l1>
-                  <Link to={"/"}>Home</Link>
-                </l1>
+               
                 <l1>
                   <Link to={"/dashboard"}>Dashboard</Link>
                 </l1>

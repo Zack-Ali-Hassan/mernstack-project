@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,12 +13,20 @@ import { Input } from "../ui/input";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-function DialogForm() {
+function DialogForm({buttonTitle, postToEdit,refresh}) {
     const [isLoading, setIsLoading] = useState(false);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [imagePost, setImage] = useState(null);
     const [preview, setPreview] = useState("");
+    const isEditing = postToEdit != null;
+    useEffect(()=>{
+      if(isEditing){
+        setTitle(postToEdit.title)
+        setContent(postToEdit.content)
+        setPreview(postToEdit.image)
+      }
+    },[])
     const HandleImageChange = (e)=>{
       let file =e.target.files[0];
       if(file){
@@ -37,14 +45,24 @@ function DialogForm() {
       setIsLoading(true)
       try {
         let response;
-        response = await axios.post("/api/post/register-post",formData,{
-          headers: {'Content-Type': 'multipart/form-data'}
-        })
+        if(isEditing){
+
+          response = await axios.post("/api/post/update-post/" + postToEdit._id,formData,{
+            headers: {'Content-Type': 'multipart/form-data'}
+          })
+          toast.success("Post Updated successfully")
+        }
+        else{
+          response = await axios.post("/api/post/register-post",formData,{
+            headers: {'Content-Type': 'multipart/form-data'}
+          })
+          toast.success("Post Registerating successfully")
+        }
         setTitle('');
         setContent('');
         setImage(null);
         setPreview('');
-        toast.success("Post created successfully")
+       
         setIsLoading(false)
       } catch (error) {
         toast.error(error.response.data)
@@ -55,7 +73,7 @@ function DialogForm() {
   return (
     <div className="">
       <Dialog>
-        <DialogTrigger><Button> Create New Post</Button></DialogTrigger>
+        <DialogTrigger><Button>{buttonTitle ? "Update Post" : "Create New Post"} </Button></DialogTrigger>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Post</DialogTitle>
