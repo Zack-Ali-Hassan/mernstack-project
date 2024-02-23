@@ -34,6 +34,7 @@ function DialogForm() {
       if(imagePost){
         formData.append('image', imagePost);
       }
+      setIsLoading(true)
       try {
         let response;
         response = await axios.post("/api/post/register-post",formData,{
@@ -44,9 +45,11 @@ function DialogForm() {
         setImage(null);
         setPreview('');
         toast.success("Post created successfully")
+        setIsLoading(false)
       } catch (error) {
         toast.error(error.response.data)
         console.log("Creating post error :" + error)
+        setIsLoading(false)
       }
     }
   return (
@@ -91,7 +94,10 @@ function DialogForm() {
                 placeholder="Enter your image"
                 onChange ={HandleImageChange}
               />
+              <div className="flex justify-center">
               {preview && <img src={preview} className="w-[250px] h-[250px]" alt="preview"/>}
+              </div>
+              
             </div>
             <Button type="submit">{isLoading ? "Registering Post....." : "Submit Post"}</Button>
           </div>

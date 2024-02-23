@@ -3,23 +3,23 @@ import Post from "../models/post.js";
 import cloudinary from "../config/cloudinary.js";
 export const readPosts = async (req, res) => {
   try {
-    
-    const getPosts = await Post.find({ author: req.user._id }).populate({
-      path: "author",
-      model: "User",
-      select: "username email",
-    }).sort({createdAt : -1});
-    console.log("get posts " + getPosts)
-    return res.status(200).json(getPosts);
+    const getPosts = await Post.find({ author: req.user._id })
+      .populate({
+        path: "author",
+        model: "User",
+        select: "username email",
+      })
+      .sort({ createdAt: -1 });
+     res.status(200).json(getPosts);
   } catch (error) {
     console.log(`${chalk.red.bold("Error reading posts")} ${error}`);
     res.status(500).json(error.message);
   }
- 
 };
 export const createPost = async (req, res) => {
   try {
     const { title, content } = req.body;
+    const currentUser = req.user._id;
     let result;
     if (req.file) {
       let encodedImage = `data:image/jpeg;base64,${req.file.buffer.toString(
@@ -42,6 +42,16 @@ export const createPost = async (req, res) => {
     return res.status(201).json(postCreate);
   } catch (error) {
     console.log(`${chalk.red.bold("Error registering post")} ${error}`);
+    res.status(500).json(error.message);
+  }
+};
+export const deletePost = async (req, res) => {
+  try {
+    const deletePost = await Post.findByIdAndDelete(req.params.id);
+    if(!deletePost) return res.status(400).json("This id is not exist")
+    res.status(200).json("Post deleted successfully")
+  } catch (error) {
+    console.log(`${chalk.red.bold("Error deleting post")} ${error}`);
     res.status(500).json(error.message);
   }
 };

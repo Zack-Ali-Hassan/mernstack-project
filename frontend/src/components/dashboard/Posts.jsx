@@ -11,28 +11,43 @@ function Posts() {
     const readUser = async ()=>{
       setIsLoading(true);
       try {
-        const {getPosts} = await axios.get("/api/post/get-user-posts");
+        const {data} = await axios.get("/api/post/get-user-posts");
         setIsLoading(false)
-        setPostData(getPosts)
+        setPostData(data)
       } catch (error) {
         setIsLoading(false)
-        toast.error(error.response.data)
+        toast.error(error.response.data.message || "Login Failed")
         console.log("Error in reading posts from frontend", error)
       }
      
     }
     readUser();
   },[])
+  const onDelete = async (id)=>{
+    try {
+      const {data} = await axios.delete('/api/post/delete-post/' +id);
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false)
+      toast.error(error.response.data.message || "Login Failed")
+      console.log("Error in deleting posts from frontend", error)
+    }
+   
+  }
+  console.log(postData)
   return (
     <div>
-        <DialogForm/>
+      <div className='mb-4'>
+      <DialogForm/>
+      </div>
+       
         {
           isLoading && <h1>Loading</h1>
         }
-        <div className='grid grid-cols-3 gap-4'>
+        <div className='grid grid-cols-3 gap-6'>
           {
-            postData?.map((post)=>(
-              <Post key={post.id} post={post}/>
+            postData?.map(post=>(
+              <Post key={post.id} post={post} onDelete={onDelete}/>
             ))
           }
 
